@@ -3,51 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Respiratório 3D</title>
+    <title>Sistema Respiratório 3D Avançado</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #111; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
+        body { margin: 0; overflow: hidden; background-color: #0d1117; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
         #canvas-container { width: 100vw; height: 100vh; }
 
         #ui-container {
             position: absolute;
             top: 20px;
             left: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 8px;
+            background-color: rgba(22, 27, 34, 0.85);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #30363d;
             pointer-events: auto;
-            max-width: 300px;
+            max-width: 320px;
             z-index: 10;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
         }
 
-        h1 { margin: 0 0 15px 0; font-size: 1.2rem; text-align: center; }
+        h1 { margin: 0 0 15px 0; font-size: 1.3rem; text-align: center; color: #58a6ff; }
 
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .btn-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
 
         button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+            background-color: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 10px 14px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
 
-        button:hover { background-color: #2980b9; }
-        button.active { background-color: #e74c3c; }
+        button:hover { background-color: #30363d; border-color: #8b949e; color: white; }
+
+        .structure-btn { border-left: 4px solid #2ea043; }
+        .structure-btn:hover { background-color: #2ea043; color: white; border-color: #2ea043; }
+
+        .action-btn { border-left: 4px solid #58a6ff; }
+        .action-btn:hover { background-color: #58a6ff; color: white; border-color: #58a6ff; }
 
         #legend {
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid #555;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            border-top: 1px solid #30363d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #8b949e;
         }
 
-        .structure-btn { background-color: #2ecc71; }
-        .structure-btn:hover { background-color: #27ae60; }
+        #legend strong { color: #c9d1d9; display: block; margin-bottom: 5px; font-size: 1.05rem; }
+
     </style>
 </head>
 <body>
@@ -55,10 +65,10 @@
         <h1>Sistema Respiratório</h1>
 
         <div class="btn-group">
-            <button id="btn-rotate">Pausar Rotação</button>
-            <button id="btn-zoom-in">Aproximar</button>
-            <button id="btn-zoom-out">Afastar</button>
-            <button id="btn-reset">Visão Geral</button>
+            <button id="btn-rotate" class="action-btn">Pausar Rotação</button>
+            <button id="btn-zoom-in" class="action-btn">Aproximar</button>
+            <button id="btn-zoom-out" class="action-btn">Afastar</button>
+            <button id="btn-reset" class="action-btn">Visão Geral</button>
         </div>
 
         <div class="btn-group">
@@ -68,7 +78,8 @@
         </div>
 
         <div id="legend">
-            <strong>Visão Geral:</strong> O sistema respiratório é responsável pela troca de gases entre o organismo e o ambiente.
+            <strong>Visão Geral</strong>
+            O sistema respiratório é responsável pela troca de gases entre o organismo e o ambiente. Inclui as vias aéreas, pulmões e músculos respiratórios.
         </div>
     </div>
 
@@ -86,98 +97,207 @@
 
         // Scene setup
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color('#1a1a2e');
+        scene.fog = new THREE.FogExp2('#0d1117', 0.02);
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const defaultCameraPos = new THREE.Vector3(0, 0, 12);
+        const defaultCameraPos = new THREE.Vector3(0, 0, 14);
         camera.position.copy(defaultCameraPos);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setClearColor(0x0d1117, 1);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         document.body.appendChild(renderer.domElement);
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
+        controls.maxDistance = 25;
+        controls.minDistance = 3;
 
         // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.position.set(5, 5, 5);
-        dirLight.castShadow = true;
-        scene.add(dirLight);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        mainLight.position.set(5, 10, 7);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 1024;
+        mainLight.shadow.mapSize.height = 1024;
+        scene.add(mainLight);
+
+        const fillLight = new THREE.DirectionalLight(0xaaccff, 0.4);
+        fillLight.position.set(-5, 0, -5);
+        scene.add(fillLight);
 
         // Group for the whole system
         const respiratorySystem = new THREE.Group();
         scene.add(respiratorySystem);
 
         // Materials
-        const cartilageMat = new THREE.MeshStandardMaterial({ color: '#d2b48c', roughness: 0.7 });
-        const lungMat = new THREE.MeshStandardMaterial({
-            color: '#ff9999',
-            transparent: true,
-            opacity: 0.7,
-            roughness: 0.4
+        const cartilageMat = new THREE.MeshStandardMaterial({
+            color: '#e0d8c8',
+            roughness: 0.6,
+            metalness: 0.1
         });
-        const muscleMat = new THREE.MeshStandardMaterial({ color: '#cc3333', roughness: 0.9 });
 
-        const targets = {}; // To store positions for camera to look at
+        const lungMat = new THREE.MeshPhysicalMaterial({
+            color: '#e87575',
+            transparent: true,
+            opacity: 0.55,
+            roughness: 0.3,
+            transmission: 0.2, // glass-like effect
+            thickness: 0.5,
+            side: THREE.DoubleSide
+        });
+
+        const muscleMat = new THREE.MeshStandardMaterial({
+            color: '#b33939',
+            roughness: 0.8,
+            side: THREE.DoubleSide
+        });
+
+        const bodyMat = new THREE.MeshPhysicalMaterial({
+            color: '#2b313d',
+            transparent: true,
+            opacity: 0.15,
+            roughness: 0.4,
+            transmission: 0.5,
+            depthWrite: false
+        });
+
+        const targets = {};
+
+        // 0. Torso Context
+        const torsoGeo = new THREE.CapsuleGeometry(3.2, 4.5, 32, 32);
+        const torso = new THREE.Mesh(torsoGeo, bodyMat);
+        torso.position.set(0, -0.5, -0.5);
+        respiratorySystem.add(torso);
 
         // 1. Traqueia (Trachea)
-        const tracheaGeo = new THREE.CylinderGeometry(0.3, 0.3, 2, 32);
-        const trachea = new THREE.Mesh(tracheaGeo, cartilageMat);
-        trachea.position.y = 2.5;
-        respiratorySystem.add(trachea);
-        targets.traqueia = new THREE.Vector3(0, 2.5, 0);
+        const tracheaGroup = new THREE.Group();
 
-        // Rings for trachea (Cartilage rings)
-        for(let i=0; i<10; i++) {
-            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.03, 8, 24), cartilageMat);
+        // Trachea tube
+        const tracheaPath = new THREE.LineCurve3(new THREE.Vector3(0, 3.2, 0), new THREE.Vector3(0, 1.2, 0));
+        const tracheaGeo = new THREE.TubeGeometry(tracheaPath, 20, 0.32, 16, false);
+        const trachea = new THREE.Mesh(tracheaGeo, cartilageMat);
+        trachea.castShadow = true;
+        tracheaGroup.add(trachea);
+
+        // Cartilage rings
+        for(let i = 0; i < 14; i++) {
+            const ring = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.04, 12, 24), cartilageMat);
             ring.rotation.x = Math.PI / 2;
-            ring.position.y = 1.6 + (i * 0.2);
-            respiratorySystem.add(ring);
+            ring.position.y = 1.3 + (i * 0.14);
+            tracheaGroup.add(ring);
+        }
+        respiratorySystem.add(tracheaGroup);
+        targets.traqueia = new THREE.Vector3(0, 2.2, 0);
+
+        // 2. Brônquios (Bronchial tree)
+        function createBranch(startPoint, endPoint, radiusStart, radiusEnd) {
+            const distance = startPoint.distanceTo(endPoint);
+            const geo = new THREE.CylinderGeometry(radiusStart, radiusEnd, distance, 16);
+            geo.translate(0, distance / 2, 0);
+            geo.rotateX(Math.PI / 2);
+            const mesh = new THREE.Mesh(geo, cartilageMat);
+            mesh.position.copy(startPoint);
+            mesh.lookAt(endPoint);
+            mesh.castShadow = true;
+            return mesh;
         }
 
-        // 2. Brônquios (Bronchi)
-        const bronchusGeo = new THREE.CylinderGeometry(0.2, 0.2, 1.5, 32);
+        const bronchiGroup = new THREE.Group();
+        // Main bronchi
+        const pTracheaEnd = new THREE.Vector3(0, 1.2, 0);
+        const pRightMain = new THREE.Vector3(0.8, 0.3, -0.2);
+        const pLeftMain = new THREE.Vector3(-0.8, 0.4, -0.1);
 
-        const rightBronchus = new THREE.Mesh(bronchusGeo, cartilageMat);
-        rightBronchus.position.set(0.6, 1.1, 0);
-        rightBronchus.rotation.z = -Math.PI / 4;
-        respiratorySystem.add(rightBronchus);
+        bronchiGroup.add(createBranch(pTracheaEnd, pRightMain, 0.28, 0.22));
+        bronchiGroup.add(createBranch(pTracheaEnd, pLeftMain, 0.28, 0.22));
 
-        const leftBronchus = new THREE.Mesh(bronchusGeo, cartilageMat);
-        leftBronchus.position.set(-0.6, 1.1, 0);
-        leftBronchus.rotation.z = Math.PI / 4;
-        respiratorySystem.add(leftBronchus);
+        // Secondary branches (Lobares)
+        // Right side (3 lobes)
+        const pRightSec1 = new THREE.Vector3(1.4, 0.8, -0.4); // Superior
+        const pRightSec2 = new THREE.Vector3(1.6, -0.1, 0.1); // Middle
+        const pRightSec3 = new THREE.Vector3(1.3, -1.0, -0.3); // Inferior
+        bronchiGroup.add(createBranch(pRightMain, pRightSec1, 0.22, 0.12));
+        bronchiGroup.add(createBranch(pRightMain, pRightSec2, 0.22, 0.12));
+        bronchiGroup.add(createBranch(pRightMain, pRightSec3, 0.22, 0.12));
+
+        // Left side (2 lobes)
+        const pLeftSec1 = new THREE.Vector3(-1.4, 0.9, -0.3); // Superior
+        const pLeftSec2 = new THREE.Vector3(-1.5, -0.8, -0.1); // Inferior
+        bronchiGroup.add(createBranch(pLeftMain, pLeftSec1, 0.22, 0.12));
+        bronchiGroup.add(createBranch(pLeftMain, pLeftSec2, 0.22, 0.12));
+
+        respiratorySystem.add(bronchiGroup);
 
         // 3. Pulmões (Lungs)
-        // We'll use a scaled sphere/capsule to represent lungs
-        const lungGeo = new THREE.CapsuleGeometry(1.2, 2.5, 16, 32);
+        // Creating a custom shape for the lungs using LatheGeometry and deformation
+        const lungPoints = [];
+        for (let i = 0; i <= 24; i++) {
+            const t = i / 24;
+            // Tapered top, wider bottom curve
+            const x = Math.sin(t * Math.PI) * (0.8 + t * 0.8);
+            const y = (t * 2) - 1; // from -1 to 1
+            lungPoints.push(new THREE.Vector2(x, y));
+        }
+        const baseLungGeo = new THREE.LatheGeometry(lungPoints, 32);
 
-        const rightLung = new THREE.Mesh(lungGeo, lungMat);
-        rightLung.position.set(1.5, -0.2, 0);
+        // Right Lung
+        const rightLung = new THREE.Mesh(baseLungGeo, lungMat);
+        rightLung.scale.set(1.1, 1.9, 1.2);
+        rightLung.position.set(1.5, -0.2, -0.1);
         respiratorySystem.add(rightLung);
 
-        const leftLung = new THREE.Mesh(lungGeo, lungMat);
-        leftLung.position.set(-1.5, -0.2, 0);
-        // Make room for the heart
-        leftLung.scale.set(0.9, 1, 1);
+        // Left Lung (with cardiac notch - simulated by scaling/rotating)
+        const leftLungGeo = baseLungGeo.clone();
+
+        // Deform left lung for cardiac notch
+        const posAttribute = leftLungGeo.attributes.position;
+        const v = new THREE.Vector3();
+        for(let i = 0; i < posAttribute.count; i++) {
+            v.fromBufferAttribute(posAttribute, i);
+            // Indent the inner-lower side (x < 0, y < 0) for the heart
+            if (v.x > 0 && v.y < 0) { // Remember local space coordinates
+                v.x -= 0.3 * Math.abs(v.y);
+            }
+            posAttribute.setXYZ(i, v.x, v.y, v.z);
+        }
+        leftLungGeo.computeVertexNormals();
+
+        const leftLung = new THREE.Mesh(leftLungGeo, lungMat);
+        leftLung.scale.set(0.95, 1.8, 1.1);
+        leftLung.position.set(-1.4, -0.1, -0.1);
+        leftLung.rotation.z = -0.05;
         respiratorySystem.add(leftLung);
 
-        targets.pulmoes = new THREE.Vector3(0, -0.2, 0);
+        targets.pulmoes = new THREE.Vector3(0, -0.1, 0);
 
-        // 4. Diafragma (Diaphragm)
-        const diaphragmGeo = new THREE.SphereGeometry(2.8, 32, 16, 0, Math.PI * 2, 0, Math.PI / 3);
+        // 4. Diafragma (Diaphragm) - Double dome shape
+        const diaphragmGeo = new THREE.SphereGeometry(2.8, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2);
+        const diagPosAttribute = diaphragmGeo.attributes.position;
+
+        for(let i = 0; i < diagPosAttribute.count; i++) {
+            v.fromBufferAttribute(diagPosAttribute, i);
+            // Create a dip in the center to simulate the double dome structure
+            const distFromCenter = Math.abs(v.x);
+            if(v.y > 0) {
+                // Lower the center
+                const dip = Math.exp(-Math.pow(v.x * 1.2, 2)) * 0.7;
+                v.y -= dip;
+            }
+            diagPosAttribute.setXYZ(i, v.x, v.y, v.z);
+        }
+        diaphragmGeo.computeVertexNormals();
+
         const diaphragm = new THREE.Mesh(diaphragmGeo, muscleMat);
-        diaphragm.position.set(0, -2.8, 0);
-        // Flatten and invert it to look like a dome underneath
-        diaphragm.scale.set(1, 0.4, 1);
+        diaphragm.position.set(0, -2.6, 0);
+        diaphragm.scale.set(1.15, 0.45, 1);
         respiratorySystem.add(diaphragm);
-        targets.diafragma = new THREE.Vector3(0, -2.8, 0);
+        targets.diafragma = new THREE.Vector3(0, -2.6, 0);
 
         // Center entire model
         respiratorySystem.position.y = -0.5;
@@ -196,9 +316,8 @@
         });
 
         document.getElementById('btn-zoom-in').addEventListener('click', () => {
-            // zoom in slightly without animating camera rigidly
             camera.position.lerp(new THREE.Vector3(0,0,0), 0.2);
-            animatingCamera = false; // let user keep dragging
+            animatingCamera = false;
         });
 
         document.getElementById('btn-zoom-out').addEventListener('click', () => {
@@ -222,22 +341,20 @@
                 const focusPoint = targets[target].clone().add(respiratorySystem.position);
                 targetLookAt.copy(focusPoint);
 
-                // Move camera closer to the target
-                const offset = new THREE.Vector3(0, 0, 4);
-                if (target === 'diafragma') {
-                    offset.y = -2;
-                }
-                targetCameraPos.copy(focusPoint).add(offset);
+                let offset = new THREE.Vector3(0, 0, 6);
+                if (target === 'diafragma') offset = new THREE.Vector3(0, -2, 7);
+                if (target === 'traqueia') offset = new THREE.Vector3(0, 0, 5);
 
+                targetCameraPos.copy(focusPoint).add(offset);
                 updateLegend(target);
             });
         });
 
         const legends = {
-            'geral': '<strong>Visão Geral:</strong> O sistema respiratório é responsável pela troca de gases entre o organismo e o ambiente.',
-            'traqueia': '<strong>Traqueia:</strong> Um tubo feito de anéis de cartilagem que leva o ar da laringe até os brônquios.',
-            'pulmoes': '<strong>Pulmões:</strong> Órgãos esponjosos onde ocorre a troca gasosa. O pulmão esquerdo é ligeiramente menor para acomodar o coração.',
-            'diafragma': '<strong>Diafragma:</strong> Principal músculo da respiração. Sua contração expande a cavidade torácica, puxando o ar para os pulmões.'
+            'geral': '<strong>Visão Geral</strong> O sistema respiratório é responsável pela troca de gases entre o organismo e o ambiente. Inclui as vias aéreas, pulmões e músculos respiratórios.',
+            'traqueia': '<strong>Traqueia e Brônquios</strong> A traqueia é um tubo cartilaginoso que se bifurca nos brônquios principais (direito e esquerdo), conduzindo o ar até os pulmões.',
+            'pulmoes': '<strong>Pulmões</strong> Órgãos vitais da respiração. Note que o pulmão esquerdo possui uma incisura cardíaca (depressão) para acomodar o coração, sendo ligeiramente menor que o direito.',
+            'diafragma': '<strong>Diafragma</strong> Músculo em forma de dupla cúpula que separa o tórax do abdômen. Sua contração é o principal motor da inspiração.'
         };
 
         function updateLegend(key) {
@@ -256,14 +373,14 @@
             requestAnimationFrame(animate);
 
             if (isAutoRotating && !animatingCamera) {
-                respiratorySystem.rotation.y += 0.005;
+                respiratorySystem.rotation.y += 0.003;
             }
 
             if (animatingCamera) {
-                camera.position.lerp(targetCameraPos, 0.05);
-                controls.target.lerp(targetLookAt, 0.05);
+                camera.position.lerp(targetCameraPos, 0.06);
+                controls.target.lerp(targetLookAt, 0.06);
 
-                if (camera.position.distanceTo(targetCameraPos) < 0.1 && controls.target.distanceTo(targetLookAt) < 0.1) {
+                if (camera.position.distanceTo(targetCameraPos) < 0.05 && controls.target.distanceTo(targetLookAt) < 0.05) {
                     animatingCamera = false;
                 }
             }
