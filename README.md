@@ -1,8 +1,15 @@
-# Variados — Atlas interativo de Ciências
+# Testes iniciais
+
+Experimentos e aplicações em desenvolvimento do Professor Luciano Costa.
+
+- [Sistema respiratório 3D](https://lucianocp10.github.io/Testes-iniciais/)
+- [Cristal de NaCl em 3D](https://lucianocp10.github.io/Testes-iniciais/repositorios/cristal-nacl/)
+
+Novos materiais de Matemática devem ficar em [Matematica](https://github.com/lucianocp10/Matematica); apresentações de Ciências, em [Aulas-ciencias](https://github.com/lucianocp10/Aulas-ciencias).
 
 ## Sistema respiratório 3D
 
-**Abrir a aplicação:** https://lucianocp10.github.io/Variados-/
+**Abrir a aplicação:** https://lucianocp10.github.io/Testes-iniciais/
 
 Modelo didático para os anos finais do Ensino Fundamental, com texto e controles em português.
 
