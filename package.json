@@ -1,0 +1,11 @@
+{
+  "name": "atlas-respiratorio",
+  "private": true,
+  "version": "1.1.0",
+  "scripts": {
+    "test": "node tests/verify-glb.cjs && node tests/verify-loading.cjs"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100"
+  }
+}
