@@ -32,7 +32,7 @@ Modelo didático para os anos finais do Ensino Fundamental, com texto e controle
 A página continua em `index.html`, sem compilação ou dependência de WebGL/CDN. Um leitor de geometria GLB 2.0 carrega os dois arquivos deste repositório via `fetch`. As malhas são projetadas em perspectiva e desenhadas em Canvas 2D. As texturas originais são substituídas por cores didáticas.
 
 - `lungs-with-trachea-respiratory-system.glb`: pulmões em cinco lobos, sete peças brônquicas, parede traqueal e 16 anéis de cartilagem. As peças respiratórias mantêm os triângulos originais.
-- `torso-with-removable-organs.glb`: invólucro do tronco e estruturas cardiovasculares de contexto. A superfície do tronco é simplificada em memória para reduzir o trabalho de desenho; os órgãos respiratórios duplicados deste arquivo não são desenhados novamente.
+- `torso-with-removable-organs.glb`: invólucro do tronco e estruturas cardiovasculares de contexto. Os triângulos do tronco são preservados; os órgãos respiratórios duplicados deste arquivo não são desenhados novamente.
 - Cabeça, vias aéreas superiores e finas, pleura, diafragma, costelas e ampliação alveolar continuam como complementos esquemáticos. As geometrias são registradas na mesma cena e compartilham câmera, seleção e ciclo respiratório.
 
 Nenhum GLB tem clipes de animação ou esqueleto. A expansão dos pulmões/lobos, o movimento do diafragma e do tórax e o fluxo de ar são animações didáticas calculadas pela aplicação. A expansão não é uma simulação biomecânica.

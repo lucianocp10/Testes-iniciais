@@ -296,20 +296,8 @@ function anatomyClass(id){
  if(id.endsWith('bronchus'))return{group:'tree',id:'bronquios',color:palettes.airway};
  return{group:'heart',id:'coracao',color:rgb(/vein|vena|pulmonary_artery|pulmonary_trunk/.test(id)?'#739bd9':'#c16f83')};
 }
-// Cluster only the contextual torso shell; all respiratory pieces keep their original triangles.
-function reduceTorso(r){
- const cells=new Map(),vertices=[],normals=[],counts=[],remap=[];
- r.vertices.forEach((p,i)=>{const key=p.map(v=>Math.floor(v/.14)).join(','),existing=cells.get(key),n=existing===undefined?vertices.length:existing;
-  if(existing===undefined){cells.set(key,n);vertices.push([0,0,0]);normals.push([0,0,0]);counts.push(0);}
-  vertices[n]=add(vertices[n],p);if(r.vertexNormals)normals[n]=add(normals[n],r.vertexNormals[i]);counts[n]++;remap.push(n);
- });
- const seen=new Set(),faces=[];
- for(const f of r.faces){const q=f.map(i=>remap[i]);if(new Set(q).size<3)continue;const key=q.slice().sort((a,b)=>a-b).join(',');if(!seen.has(key)){seen.add(key);faces.push(q);}}
- return {...r,vertices:vertices.map((p,i)=>mul(p,1/counts[i])),vertexNormals:normals.map(norm),faces};
-}
 function installGLB(records){
  return records.map(r=>{
-  if(r.anatomicalId==='torso_shell')r=reduceTorso(r);
   const item={...r,...anatomyClass(r.anatomicalId),source:'glb'};
   item.normals=item.faces.map(f=>norm(cross(sub(item.vertices[f[1]],item.vertices[f[0]]),sub(item.vertices[f[2]],item.vertices[f[0]]))));
   if(item.vertexNormals)item.shadeNormals=item.faces.map(f=>norm(add(add(item.vertexNormals[f[0]],item.vertexNormals[f[1]]),item.vertexNormals[f[2]])));
@@ -522,7 +510,7 @@ function selectStructure(id,zoom=false){
  if(id==='bronquiolos'||id==='bronquios'){state.transparent=true;$('transparent-lungs').checked=true;}
  updateInfo();if(zoom)focusSelected();dirty=true;
 }
-function focusSelected(){const d=info[state.selected];camera.goal=d.target.slice();camera.goalDistance=d.distance;camera.yaw=state.selected==='faringe'?-1.15:.14;camera.pitch=.035;state.rotating=false;$('rotate').setAttribute('aria-pressed','false');dirty=true;}
+function focusSelected(){if(importedActive()&&state.isolate!=='all'){frameIsolated();camera.yaw=.14;camera.pitch=.035;dirty=true;return;}const d=info[state.selected];camera.goal=d.target.slice();camera.goalDistance=d.distance;camera.yaw=state.selected==='faringe'?-1.15:.14;camera.pitch=.035;state.rotating=false;$('rotate').setAttribute('aria-pressed','false');dirty=true;}
 function overview(){selectStructure('geral');camera.goal=state.view==='alveoli'?[0,.2,0]:overviewTarget();camera.goalDistance=state.view==='alveoli'?7.1:overviewDistance();camera.yaw=.12;camera.pitch=.025;dirty=true;}
 function setPlaying(v){state.playing=v;updateBreathUI();dirty=true;}
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{
@@ -562,12 +550,12 @@ function closeHelp(){$('help-modal').hidden=true;$('help-btn').focus();}
 $('help-btn').addEventListener('click',()=>{$('help-modal').hidden=false;$('help-close').focus();});$('help-close').addEventListener('click',closeHelp);$('help-modal').addEventListener('click',e=>{if(e.target===$('help-modal'))closeHelp();});document.addEventListener('keydown',e=>{if(!$('help-modal').hidden){if(e.key==='Escape')closeHelp();else if(e.key==='Tab'){e.preventDefault();$('help-close').focus();}}});
 $('model-source').addEventListener('change',e=>{state.model=e.target.value;state.isolate='all';overview();updateModelUI();if(state.model==='glb')loadGLBModels();dirty=true;});
 $('retry-model').addEventListener('click',loadGLBModels);
+function frameIsolated(){const points=state.isolate==='all'?[]:modelMeshes().filter(isolationMatches).flatMap(m=>m.vertices);if(!points.length)return;const mins=[0,1,2].map(k=>Math.min(...points.map(p=>p[k]))),maxs=[0,1,2].map(k=>Math.max(...points.map(p=>p[k])));camera.goal=mins.map((v,k)=>(v+maxs[k])/2);camera.goalDistance=Math.max(4.5,...mins.map((v,k)=>(maxs[k]-v)*2.2));}
 $('isolate-organ').addEventListener('change',e=>{
  endRoute();const id=e.target.value;setView('organs');state.isolate=id;
  state.selected=id==='trachea'?'traqueia':id==='bronchi'?'bronquios':id==='all'?'geral':'pulmoes';updateInfo();
  if(lobeNames[id]){$('detail-title').textContent=lobeNames[id];$('fact-text').textContent=id.startsWith('R_')?'Este é um dos três lobos do pulmão direito. Cada lobo é uma peça independente do GLB.':'Este é um dos dois lobos do pulmão esquerdo. Cada lobo é uma peça independente do GLB.';}
- const points=id==='all'?[]:modelMeshes().filter(isolationMatches).flatMap(m=>m.vertices);
- if(points.length){const mins=[0,1,2].map(k=>Math.min(...points.map(p=>p[k]))),maxs=[0,1,2].map(k=>Math.max(...points.map(p=>p[k])));camera.goal=mins.map((v,k)=>(v+maxs[k])/2);camera.goalDistance=Math.max(4.5,...mins.map((v,k)=>(maxs[k]-v)*2.2));}
+ frameIsolated();
  updateModelUI();dirty=true;
 });
 let uiTick=0;

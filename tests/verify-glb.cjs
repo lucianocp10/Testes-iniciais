@@ -80,7 +80,7 @@ for(const id of ['right','left','R_lung_superior','R_lung_middle','R_lung_inferi
  assert.ok(run('modelMeshes().filter(isVisible).length')>0);
  assert.equal(run('modelMeshes().filter(isVisible).every(isolationMatches)'),true);
  assert.equal(run('modelMeshes().filter(isVisible).some(m=>m.group==="body")'),false);
- if(id==='R_lung_middle')snap('glb-isolated-middle');
+ if(id==='R_lung_middle'){const goal=run('camera.goal.slice()');click('focus');assert.deepEqual(run('camera.goal.slice()'),goal);snap('glb-isolated-middle');}
 }
 views[0].fire('click');assert.equal(run('state.isolate'),'all');assert.equal(run('state.body'),true);
 const initialOpacity=run('shapeStyle(glbAssets.torso.find(m=>m.group==="body")).alpha');

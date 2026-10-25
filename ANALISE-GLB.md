@@ -38,7 +38,7 @@ O arquivo do tronco contém essas mesmas peças respiratórias em outra posiçã
 
 Os modelos foram ajustados ao sistema de coordenadas da cena. Os identificadores do GLB situam as peças `R_` em X positivo; a integração reflete X e inverte a ordem dos vértices de cada triângulo para manter a orientação das faces. Assim, na vista anterior, o pulmão direito da pessoa aparece à esquerda da tela. A posição vertical do sistema respiratório no tronco é compensada antes da transformação. Normais são ajustadas para iluminação.
 
-A superfície contextual do tronco é simplificada em memória por agrupamento de vértices, preservando os arquivos originais e os triângulos das peças respiratórias. A ordenação de faces transparentes é aproximada, como no renderizador Canvas já utilizado no projeto.
+Os triângulos originais das peças utilizadas são preservados. A ordenação de faces transparentes é aproximada, como no renderizador Canvas já utilizado no projeto.
 
 ## Limites para a aula
 
