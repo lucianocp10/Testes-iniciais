@@ -27,7 +27,7 @@ const actual=createCanvas(viewport.width,viewport.height),canvas=elements.anatom
 canvas.getContext=(...a)=>actual.getContext(...a);canvas.parentElement=new Element('wrap');canvas.setPointerCapture=()=>{};
 Object.defineProperties(canvas,{width:{get:()=>actual.width,set:v=>actual.width=v},height:{get:()=>actual.height,set:v=>actual.height=v}});
 const views=['body','organs','alveoli'].map(view=>{const el=new Element(view);el.dataset.view=view;return el;});
-const document={baseURI:"https://lucianocp10.github.io/Variados-/",getElementById:id=>elements[id],querySelectorAll:()=>views,addEventListener(){},hidden:false,fullscreenElement:null,documentElement:{}};
+const document={baseURI:"https://lucianocp10.github.io/Testes-iniciais/sistema-respiratorio/",getElementById:id=>elements[id],querySelectorAll:()=>views,addEventListener(){},hidden:false,fullscreenElement:null,documentElement:{}};
 let failure='none';let calls=[];
 async function fakeFetch(url){
  const name=url.pathname.split('/').pop();calls.push(name);

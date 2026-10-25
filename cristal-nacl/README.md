@@ -9,7 +9,7 @@ Aplicação educacional em um único arquivo `index.html`, com Three.js 0.160.1 
 3. Escolha a branch **main** e a pasta **/ (root)**. Clique em **Save**.
 4. Aguarde a publicação. A aplicação ficará em:
 
-https://lucianocp10.github.io/Testes-iniciais/repositorios/cristal-nacl/
+https://lucianocp10.github.io/Testes-iniciais/cristal-nacl/
 
 O endereço só funcionará após a ativação e conclusão da publicação. Se Pages já estiver configurado, confira a origem antes de alterar. A página de um arquivo HTML em github.com mostra o código; a visualização interativa é servida pelo GitHub Pages.
 
