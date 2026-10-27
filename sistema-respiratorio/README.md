@@ -27,7 +27,7 @@ Modelo didático para os anos finais do Ensino Fundamental, com texto e controle
 
 ### Uso e implementação
 
-A página continua em `index.html`, sem compilação ou dependência de WebGL/CDN. Um leitor de geometria GLB 2.0 carrega os dois arquivos deste repositório via `fetch`. As malhas são projetadas em perspectiva e desenhadas em Canvas 2D. As texturas originais são substituídas por cores didáticas.
+A página continua em `index.html`, sem compilação, biblioteca externa ou CDN. Um leitor de geometria GLB 2.0 carrega os dois arquivos deste repositório via `fetch`. As malhas são desenhadas em WebGL, com z-buffer real, normais suaves, iluminação presa à câmera, brilho de borda e transparência por camadas (fundo e frente). Rótulos, linhas e partículas de ar ficam numa camada Canvas 2D sobreposta. Se o navegador não oferecer WebGL, ou se o contexto for perdido, a página usa automaticamente o renderizador em Canvas 2D anterior. Ao soltar o arraste, o modelo continua girando com inércia (desligada com redução de movimento). As texturas originais são substituídas por cores didáticas.
 
 - `lungs-with-trachea-respiratory-system.glb`: pulmões em cinco lobos, sete peças brônquicas, parede traqueal e 16 anéis de cartilagem. As peças respiratórias mantêm os triângulos originais.
 - `torso-with-removable-organs.glb`: invólucro do tronco e estruturas cardiovasculares de contexto. Os triângulos do tronco são preservados; os órgãos respiratórios duplicados deste arquivo não são desenhados novamente.
