@@ -2,92 +2,661 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cristal de sal • NaCl em 3D</title>
+<title>Laboratório de Química 3D • NaCl e Moléculas</title>
 <style>
-:root{color-scheme:dark;font-family:system-ui,sans-serif;color:#eaf3ff;background:#080f1e}*{box-sizing:border-box}body{margin:0}main{max-width:1400px;margin:auto;padding:28px}header p{color:#9aafca;margin:8px 0 22px}h1{font-size:clamp(26px,4vw,42px);margin:8px 0}small.eyebrow{letter-spacing:.18em;color:#66e0c0;font-weight:700}.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px}.viewport{position:relative;height: min(72vh,740px);min-height:380px;border:1px solid #263954;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at center,#172944,#080f1e)}canvas{display:block;width:100%;height:100%;touch-action:none}.hint{position:absolute;bottom:16px;left:16px;right:16px;color:#b6c9df;font-size:13px;pointer-events:none}.badge{position:absolute;top:16px;left:16px;padding:8px 12px;border-radius:24px;background:#0c192bd9;font-size:12px;pointer-events:none}.panel{padding:22px;background:#101d30;border:1px solid #263954;border-radius:20px}h2{font-size:18px;margin:0 0 16px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:9px}button{font:inherit;color:#eaf3ff;background:#203654;border:1px solid #3d5574;padding:12px 8px;border-radius:10px;cursor:pointer}button:hover{background:#2c496e}button:focus-visible,input:focus-visible{outline:3px solid #66e0c0;outline-offset:3px}button:disabled{opacity:.45;cursor:wait}.wide{grid-column:1/-1}button[aria-pressed=true]{background:#1d5553;border-color:#66e0c0}label{display:flex;align-items:center;gap:10px;margin:18px 0;cursor:pointer}input{width:18px;height:18px;accent-color:#66e0c0}.dot{display:inline-block;flex-shrink:0;width:16px;height:16px;border-radius:50%}.na{background:#ac88ff}.cl{background:#54dfb1}.divider{border-top:1px solid #293d57;margin:22px 0}.info{color:#b6c9df;font-size:14px;line-height:1.65}.info strong{color:#eaf3ff}.status{color:#fbd693;position:absolute;top:60px;left:20px;right:20px;font-size:14px}footer{font-size:13px;color:#9aafca;margin-top:18px;line-height:1.6}@media(max-width:800px){main{padding:18px}.layout{grid-template-columns:1fr}.viewport{height:58vh;min-height:340px}.panel{padding:20px}}
+:root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#eaf3ff;background:#080f1e}
+*{box-sizing:border-box}
+body{margin:0}
+main{max-width:1440px;margin:auto;padding:24px 28px}
+header{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.header-top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px}
+header p{color:#9aafca;margin:0;font-size:15px}
+h1{font-size:clamp(24px,3.5vw,38px);margin:4px 0;letter-spacing:-.02em}
+small.eyebrow{letter-spacing:.18em;color:#66e0c0;font-weight:700;font-size:12px}
+.model-nav{display:flex;flex-wrap:wrap;gap:8px;padding:6px;background:#0d1829;border:1px solid #263954;border-radius:14px;margin-top:8px}
+.tab-btn{flex:1 1 auto;min-width:120px;display:flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-size:14px;font-weight:600;color:#b6c9df;background:transparent;border:1px solid transparent;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .18s ease}
+.tab-btn:hover{background:#172944;color:#eaf3ff}
+.tab-btn[aria-selected="true"]{background:#1d5553;border-color:#66e0c0;color:#fff;box-shadow:0 4px 14px #00000040}
+.tab-formula{font-weight:800;color:#66e0c0;font-size:13px;padding:2px 7px;border-radius:6px;background:#08122180}
+.tab-btn[aria-selected="true"] .tab-formula{background:#0b2928;color:#8fffe0}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px}
+.viewport{position:relative;height:min(70vh,720px);min-height:400px;border:1px solid #263954;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at center,#172944,#080f1e)}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.hint{position:absolute;bottom:16px;left:16px;right:16px;color:#b6c9df;font-size:13px;pointer-events:none;background:#080f1eb3;padding:8px 12px;border-radius:10px;width:fit-content;max-width:calc(100% - 32px)}
+.top-badges{position:absolute;top:16px;left:16px;right:16px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;pointer-events:none}
+.badge{padding:8px 14px;border-radius:24px;background:#0c192bd9;border:1px solid #293d57;font-size:12.5px;font-weight:600;color:#eaf3ff;backdrop-filter:blur(6px)}
+.badge-type{color:#66e0c0}
+.panel{padding:22px;background:#101d30;border:1px solid #263954;border-radius:20px;display:flex;flex-direction:column;gap:4px}
+h2{font-size:17px;margin:0 0 12px;color:#eaf3ff}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button{font:inherit;font-size:14px;color:#eaf3ff;background:#203654;border:1px solid #3d5574;padding:11px 8px;border-radius:10px;cursor:pointer;transition:background .15s}
+button:hover{background:#2c496e}
+button:focus-visible,input:focus-visible{outline:3px solid #66e0c0;outline-offset:3px}
+button:disabled{opacity:.45;cursor:wait}
+.wide{grid-column:1/-1}
+button[aria-pressed=true]{background:#1d5553;border-color:#66e0c0;font-weight:600}
+.slide-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.slide-nav button{background:#16263d;border-color:#2e4563;font-size:13px;padding:9px 8px}
+.slide-nav button:hover{background:#223859}
+label{display:flex;align-items:center;gap:10px;margin:11px 0;cursor:pointer;font-size:14px;color:#d6e6fa}
+input[type="checkbox"]{width:18px;height:18px;accent-color:#66e0c0;cursor:pointer;flex-shrink:0}
+.dot{display:inline-block;flex-shrink:0;width:16px;height:16px;border-radius:50%;border:1px solid #ffffff33}
+.na{background:#ac88ff}
+.cl{background:#54dfb1}
+.divider{border-top:1px solid #293d57;margin:16px 0}
+.specs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px}
+.spec-box{background:#0b1524;border:1px solid #22344d;border-radius:10px;padding:9px 11px}
+.spec-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#8aa2be;display:block;margin-bottom:3px}
+.spec-val{font-size:13.5px;font-weight:700;color:#eaf3ff}
+.info{color:#b6c9df;font-size:13.8px;line-height:1.6}
+.info strong{color:#eaf3ff;display:block;margin-bottom:6px;font-size:15px}
+.info p{margin:0 0 10px}
+.info p:last-child{margin-bottom:0}
+.status{color:#fbd693;position:absolute;top:64px;left:20px;right:20px;font-size:14px;pointer-events:none}
+footer{font-size:13px;color:#9aafca;margin-top:18px;line-height:1.6}
+@media(max-width:860px){
+  main{padding:16px}
+  .layout{grid-template-columns:1fr}
+  .viewport{height:56vh;min-height:340px}
+  .panel{padding:18px}
+  .tab-btn{min-width:105px;padding:9px 10px;font-size:13px}
+}
 </style>
 </head>
 <body>
 <main>
-<header><small class="eyebrow">LABORATÓRIO DE QUÍMICA</small><h1>Por dentro de um cristal de sal</h1><p>Explore a organização tridimensional do cloreto de sódio — NaCl.</p></header>
+<header>
+  <div class="header-top">
+    <div>
+      <small class="eyebrow">LABORATÓRIO DE QUÍMICA · APRESENTAÇÃO INTERATIVA 3D</small>
+      <h1 id="pageTitle">Por dentro de um cristal de sal e moléculas</h1>
+    </div>
+  </div>
+  <p id="pageSubtitle">Compare a rede iônica tridimensional do cloreto de sódio (NaCl) com estruturas moleculares covalentes em 3D.</p>
+  <nav class="model-nav" role="tablist" aria-label="Escolha o modelo químico 3D">
+    <button class="tab-btn" id="tab-nacl" role="tab" aria-selected="true" data-model="nacl">
+      <span class="tab-formula">NaCl</span><span>Cristal de Sal</span>
+    </button>
+    <button class="tab-btn" id="tab-h2o" role="tab" aria-selected="false" data-model="h2o">
+      <span class="tab-formula">H₂O</span><span>Água</span>
+    </button>
+    <button class="tab-btn" id="tab-co2" role="tab" aria-selected="false" data-model="co2">
+      <span class="tab-formula">CO₂</span><span>Gás Carbônico</span>
+    </button>
+    <button class="tab-btn" id="tab-nh3" role="tab" aria-selected="false" data-model="nh3">
+      <span class="tab-formula">NH₃</span><span>Amoníaco</span>
+    </button>
+    <button class="tab-btn" id="tab-ch4" role="tab" aria-selected="false" data-model="ch4">
+      <span class="tab-formula">CH₄</span><span>Metano</span>
+    </button>
+    <button class="tab-btn" id="tab-c6h6" role="tab" aria-selected="false" data-model="c6h6">
+      <span class="tab-formula">C₆H₆</span><span>Benzeno</span>
+    </button>
+  </nav>
+</header>
+
 <div class="layout">
-<section class="viewport" id="view" aria-label="Modelo interativo tridimensional do cristal de sal">
-<div class="badge">NaCl · estrutura do tipo sal-gema</div><div class="status" id="status" role="status">Carregando o modelo 3D…</div>
-<div class="hint">Arraste para girar · role para aproximar · no celular, use dois dedos para zoom.</div>
-</section>
-<aside class="panel"><h2>Explore o cristal</h2>
-<div class="controls"><button id="rotate" class="wide" aria-pressed="false" disabled>Iniciar rotação</button><button id="left" disabled>↶ Girar</button><button id="right" disabled>Girar ↷</button><button id="near" disabled>+ Aproximar</button><button id="far" disabled>− Afastar</button><button id="reset" class="wide" disabled>Restaurar visualização</button></div>
-<div class="divider"></div><h2>Legenda e visibilidade</h2>
-<label><input type="checkbox" id="sodium" checked><span class="dot na"></span><span>Sódio — Na⁺</span></label>
-<label><input type="checkbox" id="chloride" checked><span class="dot cl"></span><span>Cloreto — Cl⁻ (cloro)</span></label>
-<label><input type="checkbox" id="connections" checked><span>Mostrar vizinhos próximos</span></label>
-<div class="divider"></div><div class="info"><strong>Uma rede, muitos íons</strong><p>No interior do cristal, cada Na⁺ tem seis Cl⁻ como vizinhos mais próximos, e cada Cl⁻ tem seis Na⁺. Essa organização se repete nas três direções do espaço.</p><p>O sal sólido forma uma rede iônica; não é um conjunto de moléculas isoladas de NaCl.</p></div>
-</aside></div>
-<footer>Representação didática de um fragmento da rede cristalina. Cores e tamanhos são ilustrativos. Os traços indicam vizinhos próximos, não ligações covalentes. Na superfície do fragmento, alguns vizinhos ficaram fora do recorte. Requer internet para carregar Three.js pela CDN.</footer>
+  <section class="viewport" id="view" aria-label="Modelo interativo tridimensional">
+    <div class="top-badges">
+      <div class="badge" id="modelBadge">NaCl · estrutura do tipo sal-gema</div>
+      <div class="badge badge-type" id="bondBadge">Ligação Iônica · Rede Cristalina</div>
+    </div>
+    <div class="status" id="status" role="status">Carregando o modelo 3D…</div>
+    <div class="hint">Arraste para girar · role para aproximar · use as abas ou as setas do teclado para alternar modelos.</div>
+  </section>
+
+  <aside class="panel">
+    <h2>Apresentação e câmera</h2>
+    <div class="slide-nav">
+      <button id="prevModel" disabled>← Anterior</button>
+      <button id="nextModel" disabled>Próximo →</button>
+    </div>
+    <div class="controls">
+      <button id="rotate" class="wide" aria-pressed="false" disabled>Iniciar rotação</button>
+      <button id="left" disabled>↶ Girar</button>
+      <button id="right" disabled>Girar ↷</button>
+      <button id="near" disabled>+ Aproximar</button>
+      <button id="far" disabled>− Afastar</button>
+      <button id="scaleMode" class="wide" aria-pressed="false" disabled>Modo: Esferas e Bastões</button>
+      <button id="reset" class="wide" disabled>Restaurar visualização</button>
+    </div>
+
+    <div class="divider"></div>
+    <h2>Legenda e visibilidade</h2>
+    <label id="rowPrimary">
+      <input type="checkbox" id="sodium" checked>
+      <span class="dot na" id="dotPrimary"></span>
+      <span id="labelPrimary">Sódio — Na⁺</span>
+    </label>
+    <label id="rowSecondary">
+      <input type="checkbox" id="chloride" checked>
+      <span class="dot cl" id="dotSecondary"></span>
+      <span id="labelSecondary">Cloreto — Cl⁻ (cloro)</span>
+    </label>
+    <label>
+      <input type="checkbox" id="connections" checked>
+      <span id="labelConnections">Mostrar vizinhos próximos</span>
+    </label>
+
+    <div class="divider"></div>
+    <div class="specs-grid">
+      <div class="spec-box">
+        <span class="spec-label">Geometria</span>
+        <span class="spec-val" id="specGeometry">Cúbica (FCC)</span>
+      </div>
+      <div class="spec-box">
+        <span class="spec-label">Ângulo / Coord.</span>
+        <span class="spec-val" id="specAngle">90° (Coord. 6:6)</span>
+      </div>
+    </div>
+    <div class="info" id="infoBox">
+      <strong id="infoTitle">Uma rede, muitos íons</strong>
+      <p id="infoP1">No interior do cristal, cada Na⁺ tem seis Cl⁻ como vizinhos mais próximos, e cada Cl⁻ tem seis Na⁺. Essa organização se repete nas três direções do espaço.</p>
+      <p id="infoP2">O sal sólido forma uma rede iônica contínua; não é um conjunto de moléculas isoladas de NaCl.</p>
+    </div>
+  </aside>
+</div>
+<footer id="footerNote">Representação didática tridimensional de redes cristalinas iônicas e estruturas moleculares covalentes (padrão de cores CPK). Cores e tamanhos são ilustrativos. Requer internet para carregar Three.js pela CDN.</footer>
 </main>
+
 <script type="module">
 const status = document.getElementById('status');
+
+const MODELS = {
+  nacl: {
+    id: 'nacl',
+    badge: 'NaCl · estrutura do tipo sal-gema',
+    bondType: 'Ligação Iônica · Rede Cristalina',
+    geometry: 'Cúbica (FCC)',
+    angle: '90° (Coord. 6:6)',
+    primaryLabel: 'Sódio — Na⁺',
+    primaryColor: '#ac88ff',
+    secondaryLabel: 'Cloreto — Cl⁻ (cloro)',
+    secondaryColor: '#54dfb1',
+    connectionsLabel: 'Mostrar vizinhos próximos',
+    infoTitle: 'Uma rede, muitos íons',
+    infoP1: 'No interior do cristal, cada Na⁺ tem seis Cl⁻ como vizinhos mais próximos, e cada Cl⁻ tem seis Na⁺. Essa organização se repete nas três direções do espaço.',
+    infoP2: 'O sal sólido forma uma rede iônica; não é um conjunto de moléculas isoladas de NaCl.',
+    defaultDistance: 10
+  },
+  h2o: {
+    id: 'h2o',
+    badge: 'H₂O · molécula de água',
+    bondType: 'Ligação Covalente Polar · Molécula',
+    geometry: 'Angular',
+    angle: '104,5°',
+    primaryLabel: 'Oxigênio — O (central)',
+    primaryColor: '#ff4d4d',
+    secondaryLabel: 'Hidrogênio — H (2 átomos)',
+    secondaryColor: '#f0f6ff',
+    connectionsLabel: 'Mostrar ligações covalentes (O–H)',
+    infoTitle: 'Geometria angular e polaridade',
+    infoP1: 'Na molécula de água, um átomo de oxigênio compartilha elétrons com dois átomos de hidrogênio. Os dois pares de elétrons não ligantes no oxigênio repelem as ligações, criando o ângulo de 104,5°.',
+    infoP2: 'Diferente do cristal de NaCl, a água é formada por moléculas discretas e polares, unidas entre si por ligações de hidrogênio.',
+    defaultDistance: 7.2
+  },
+  co2: {
+    id: 'co2',
+    badge: 'CO₂ · dióxido de carbono',
+    bondType: 'Ligação Covalente Dupla · Molécula',
+    geometry: 'Linear',
+    angle: '180°',
+    primaryLabel: 'Carbono — C (central)',
+    primaryColor: '#7a8a9e',
+    secondaryLabel: 'Oxigênio — O (2 átomos)',
+    secondaryColor: '#ff4d4d',
+    connectionsLabel: 'Mostrar ligações duplas (C=O)',
+    infoTitle: 'Simetria linear e ligações duplas',
+    infoP1: 'O átomo de carbono central estabelece duas ligações covalentes duplas (C=O) em sentidos opostos, sem pares de elétrons livres no átomo central.',
+    infoP2: 'Por ter geometria linear simétrica (180°), os vetores de polaridade das ligações se anulam, tornando a molécula de CO₂ apolar.',
+    defaultDistance: 7.8
+  },
+  nh3: {
+    id: 'nh3',
+    badge: 'NH₃ · molécula de amoníaco',
+    bondType: 'Ligação Covalente Polar · Molécula',
+    geometry: 'Piramidal Trigonal',
+    angle: '107,3°',
+    primaryLabel: 'Nitrogênio — N (topo)',
+    primaryColor: '#4d79ff',
+    secondaryLabel: 'Hidrogênio — H (3 átomos)',
+    secondaryColor: '#f0f6ff',
+    connectionsLabel: 'Mostrar ligações covalentes (N–H)',
+    infoTitle: 'Pirâmide trigonal com par livre',
+    infoP1: 'O nitrogênio forma três ligações covalentes simples com átomos de hidrogênio e mantém um par de elétrons não ligante no topo da pirâmide.',
+    infoP2: 'A repulsão desse par de elétrons livre comprime os ângulos H–N–H para 107,3°, conferindo forte caráter polar à molécula.',
+    defaultDistance: 7.4
+  },
+  ch4: {
+    id: 'ch4',
+    badge: 'CH₄ · molécula de metano',
+    bondType: 'Ligação Covalente Apolar · Molécula',
+    geometry: 'Tetraédrica',
+    angle: '109,5°',
+    primaryLabel: 'Carbono — C (central)',
+    primaryColor: '#7a8a9e',
+    secondaryLabel: 'Hidrogênio — H (4 átomos)',
+    secondaryColor: '#f0f6ff',
+    connectionsLabel: 'Mostrar ligações covalentes (C–H)',
+    infoTitle: 'O tetraedro clássico da química orgânica',
+    infoP1: 'Os quatro pares de elétrons das ligações C–H se afastam ao máximo no espaço tridimensional, apontando para os vértices de um tetraedro regular.',
+    infoP2: 'Todos os quatro ângulos H–C–H medem exatamente 109,5°, distribuindo a carga de forma perfeitamente simétrica no espaço.',
+    defaultDistance: 7.6
+  },
+  c6h6: {
+    id: 'c6h6',
+    badge: 'C₆H₆ · anel aromático de benzeno',
+    bondType: 'Ressonância Aromática · Molécula Planar',
+    geometry: 'Hexagonal Planar',
+    angle: '120°',
+    primaryLabel: 'Carbono — C (anel de 6 átomos)',
+    primaryColor: '#7a8a9e',
+    secondaryLabel: 'Hidrogênio — H (6 átomos)',
+    secondaryColor: '#f0f6ff',
+    connectionsLabel: 'Mostrar ligações do anel e C–H',
+    infoTitle: 'Anel hexagonal e elétrons deslocalizados',
+    infoP1: 'Seis átomos de carbono formam um hexágono plano perfeito com ângulos de 120°, cada um ligado a um átomo de hidrogênio periférico.',
+    infoP2: 'As ligações carbono-carbono têm comprimento intermediário entre simples e dupla devido à ressonância (nuvem π aromática compartilhada por todo o anel).',
+    defaultDistance: 9.2
+  }
+};
+
+const MODEL_ORDER = ['nacl', 'h2o', 'co2', 'nh3', 'ch4', 'c6h6'];
+
 try {
   const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js');
   const view = document.getElementById('view');
   const renderer = new THREE.WebGLRenderer({antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   renderer.setClearColor(0x000000,0);
-  renderer.domElement.setAttribute('aria-label','Cristal de NaCl: íons roxos de sódio e verdes de cloreto alternados em três dimensões');
+  renderer.domElement.setAttribute('aria-label','Visualizador 3D de estruturas químicas: cristal de NaCl e moléculas covalentes');
   view.prepend(renderer.domElement);
+
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40,1,.1,100);
   scene.add(new THREE.HemisphereLight(0xe8f6ff,0x24304d,2.4));
-  const light = new THREE.DirectionalLight(0xffffff,3); light.position.set(4,8,10);scene.add(light);
-  const rim = new THREE.DirectionalLight(0x72baff,1.5);rim.position.set(-8,1,-5);scene.add(rim);
-  const crystal = new THREE.Group();scene.add(crystal);
-  const sodium = new THREE.Group(),chloride = new THREE.Group();crystal.add(sodium,chloride);
-  const sphere = new THREE.SphereGeometry(1,24,16);
-  const naMaterial = new THREE.MeshStandardMaterial({color:0xac88ff,roughness:.3,metalness:.12});
-  const clMaterial = new THREE.MeshStandardMaterial({color:0x54dfb1,roughness:.3,metalness:.12});
-  const positions=[];
-  // Alternância nas três direções: duas sub-redes cúbicas de faces centradas.
-  // Recorte simétrico com 4 × 4 × 4 sítios e proporção Na:Cl de 1:1.
-  for(let x=0;x<4;x++)for(let y=0;y<4;y++)for(let z=0;z<4;z++){
-    const na=(x+y+z)%2===0;
-    const atom=new THREE.Mesh(sphere,na?naMaterial:clMaterial);
-    atom.position.set(x-1.5,y-1.5,z-1.5);atom.scale.setScalar(na?.22:.32);
-    (na?sodium:chloride).add(atom);
-    for(const [dx,dy,dz] of [[1,0,0],[0,1,0],[0,0,1]])if(x+dx<4&&y+dy<4&&z+dz<4){positions.push(x-1.5,y-1.5,z-1.5,x+dx-1.5,y+dy-1.5,z+dz-1.5);}
+  const light = new THREE.DirectionalLight(0xffffff,3);
+  light.position.set(4,8,10);
+  scene.add(light);
+  const rim = new THREE.DirectionalLight(0x72baff,1.5);
+  rim.position.set(-8,1,-5);
+  scene.add(rim);
+
+  const crystal = new THREE.Group();
+  scene.add(crystal);
+  const sodium = new THREE.Group();
+  const chloride = new THREE.Group();
+  const bondsGroup = new THREE.Group();
+  crystal.add(sodium, chloride, bondsGroup);
+
+  const sphere = new THREE.SphereGeometry(1,28,20);
+  const cylinder = new THREE.CylinderGeometry(1,1,1,18,1);
+
+  const materials = {
+    na: new THREE.MeshStandardMaterial({color:0xac88ff,roughness:.28,metalness:.12}),
+    cl: new THREE.MeshStandardMaterial({color:0x54dfb1,roughness:.28,metalness:.12}),
+    o:  new THREE.MeshStandardMaterial({color:0xff4d4d,roughness:.28,metalness:.12}),
+    h:  new THREE.MeshStandardMaterial({color:0xf0f6ff,roughness:.25,metalness:.08}),
+    c:  new THREE.MeshStandardMaterial({color:0x7a8a9e,roughness:.32,metalness:.18}),
+    n:  new THREE.MeshStandardMaterial({color:0x4d79ff,roughness:.28,metalness:.12}),
+    bond: new THREE.MeshStandardMaterial({color:0x8faac7,roughness:.4,metalness:.2}),
+    aromatic: new THREE.MeshStandardMaterial({color:0x66e0c0,roughness:.35,metalness:.15,transparent:true,opacity:.75}),
+    line: new THREE.LineBasicMaterial({color:0x7c9ab7,transparent:true,opacity:.38})
+  };
+
+  let currentModelKey = 'nacl';
+  let spaceFilling = false;
+  let activeAtoms = [];
+
+  function clearGroup(group) {
+    while (group.children.length > 0) {
+      group.remove(group.children[0]);
+    }
   }
-  const lineGeometry=new THREE.BufferGeometry();lineGeometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  const lines=new THREE.LineSegments(lineGeometry,new THREE.LineBasicMaterial({color:0x7c9ab7,transparent:true,opacity:.35}));crystal.add(lines);
-  const $=id=>document.getElementById(id);
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let auto=false,yaw=.62,pitch=.36,distance=10,last=0;
-  function update(){crystal.rotation.set(pitch,yaw,0);camera.position.set(0,0,distance);camera.lookAt(0,0,0);}
-  function zoom(factor){distance=THREE.MathUtils.clamp(distance*factor,5.4,19);update();}
-  function visible(){sodium.visible=$('sodium').checked;chloride.visible=$('chloride').checked;lines.visible=$('connections').checked&&sodium.visible&&chloride.visible;}
-  function rotationButton(){$('rotate').textContent=auto?'Pausar rotação':'Iniciar rotação';$('rotate').setAttribute('aria-pressed',String(auto));}
-  $('rotate').onclick=()=>{auto=!auto;rotationButton();};
-  $('left').onclick=()=>{yaw-=Math.PI/12;update();};$('right').onclick=()=>{yaw+=Math.PI/12;update();};
-  $('near').onclick=()=>zoom(.85);$('far').onclick=()=>zoom(1/.85);
-  for(const id of ['sodium','chloride','connections'])$(id).onchange=visible;
-  $('reset').onclick=()=>{yaw=.62;pitch=.36;distance=10;auto=false;for(const id of ['sodium','chloride','connections'])$(id).checked=true;visible();rotationButton();update();};
-  const pointers=new Map();let pinch=0;
-  const canvas=renderer.domElement;
-  canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});pinch=0;});
-  canvas.addEventListener('pointermove',e=>{
-    const old=pointers.get(e.pointerId);if(!old)return;
-    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if(pointers.size===1){yaw+=(e.clientX-old.x)*.008;pitch=THREE.MathUtils.clamp(pitch+(e.clientY-old.y)*.008,-1.5,1.5);update();}
-    else if(pointers.size===2){const [a,b]=[...pointers.values()];const gap=Math.hypot(a.x-b.x,a.y-b.y);if(pinch&&gap)zoom(pinch/gap);pinch=gap;}
+
+  function addAtom(targetGroup, mat, pos, baseRadius, cpkRadius) {
+    const mesh = new THREE.Mesh(sphere, mat);
+    mesh.position.copy(pos);
+    const r = spaceFilling ? cpkRadius : baseRadius;
+    mesh.scale.setScalar(r);
+    targetGroup.add(mesh);
+    activeAtoms.push({ mesh, baseRadius, cpkRadius });
+  }
+
+  function addCylinderBond(p1, p2, radius = 0.085, mat = materials.bond) {
+    const dir = new THREE.Vector3().subVectors(p2, p1);
+    const len = dir.length();
+    const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+    const mesh = new THREE.Mesh(cylinder, mat);
+    mesh.position.copy(mid);
+    mesh.scale.set(radius, len, radius);
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+    bondsGroup.add(mesh);
+  }
+
+  function addDoubleBond(p1, p2, offsetDir = new THREE.Vector3(0, 1, 0), sep = 0.13) {
+    const off = offsetDir.clone().normalize().multiplyScalar(sep);
+    addCylinderBond(p1.clone().add(off), p2.clone().add(off), 0.068, materials.bond);
+    addCylinderBond(p1.clone().sub(off), p2.clone().sub(off), 0.068, materials.bond);
+  }
+
+  function addDashedResonanceBond(p1, p2, offsetDir, sep = 0.14) {
+    const off = offsetDir.clone().normalize().multiplyScalar(sep);
+    addCylinderBond(p1.clone().sub(off), p2.clone().sub(off), 0.072, materials.bond);
+    const start = p1.clone().add(off);
+    const end = p2.clone().add(off);
+    const segments = 5;
+    for (let i = 0; i < segments; i++) {
+      if (i % 2 === 0) {
+        const a = new THREE.Vector3().lerpVectors(start, end, i / segments);
+        const b = new THREE.Vector3().lerpVectors(start, end, (i + 1) / segments);
+        addCylinderBond(a, b, 0.055, materials.aromatic);
+      }
+    }
+  }
+
+  function buildModel(key) {
+    clearGroup(sodium);
+    clearGroup(chloride);
+    clearGroup(bondsGroup);
+    activeAtoms = [];
+
+    if (key === 'nacl') {
+      const positions = [];
+      for (let x = 0; x < 4; x++) {
+        for (let y = 0; y < 4; y++) {
+          for (let z = 0; z < 4; z++) {
+            const isNa = (x + y + z) % 2 === 0;
+            const pos = new THREE.Vector3(x - 1.5, y - 1.5, z - 1.5);
+            addAtom(
+              isNa ? sodium : chloride,
+              isNa ? materials.na : materials.cl,
+              pos,
+              isNa ? 0.22 : 0.32,
+              isNa ? 0.42 : 0.58
+            );
+            for (const [dx, dy, dz] of [[1, 0, 0], [0, 1, 0], [0, 0, 1]]) {
+              if (x + dx < 4 && y + dy < 4 && z + dz < 4) {
+                positions.push(
+                  x - 1.5, y - 1.5, z - 1.5,
+                  x + dx - 1.5, y + dy - 1.5, z + dz - 1.5
+                );
+              }
+            }
+          }
+        }
+      }
+      const lineGeometry = new THREE.BufferGeometry();
+      lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      const lines = new THREE.LineSegments(lineGeometry, materials.line);
+      bondsGroup.add(lines);
+    } else if (key === 'h2o') {
+      const bondLen = 1.45;
+      const halfAngle = (104.5 * Math.PI / 180) / 2;
+      const oPos = new THREE.Vector3(0, 0.3, 0);
+      const h1Pos = new THREE.Vector3(
+        Math.sin(halfAngle) * bondLen,
+        0.3 - Math.cos(halfAngle) * bondLen,
+        0
+      );
+      const h2Pos = new THREE.Vector3(
+        -Math.sin(halfAngle) * bondLen,
+        0.3 - Math.cos(halfAngle) * bondLen,
+        0
+      );
+      addAtom(sodium, materials.o, oPos, 0.48, 0.95);
+      addAtom(chloride, materials.h, h1Pos, 0.30, 0.65);
+      addAtom(chloride, materials.h, h2Pos, 0.30, 0.65);
+      addCylinderBond(oPos, h1Pos, 0.09);
+      addCylinderBond(oPos, h2Pos, 0.09);
+    } else if (key === 'co2') {
+      const bondLen = 1.65;
+      const cPos = new THREE.Vector3(0, 0, 0);
+      const o1Pos = new THREE.Vector3(-bondLen, 0, 0);
+      const o2Pos = new THREE.Vector3(bondLen, 0, 0);
+      addAtom(sodium, materials.c, cPos, 0.46, 0.95);
+      addAtom(chloride, materials.o, o1Pos, 0.48, 0.92);
+      addAtom(chloride, materials.o, o2Pos, 0.48, 0.92);
+      addDoubleBond(cPos, o1Pos, new THREE.Vector3(0, 1, 0), 0.13);
+      addDoubleBond(cPos, o2Pos, new THREE.Vector3(0, 1, 0), 0.13);
+    } else if (key === 'nh3') {
+      const nPos = new THREE.Vector3(0, 0.48, 0);
+      addAtom(sodium, materials.n, nPos, 0.48, 0.95);
+      const rRing = 1.32;
+      const yBase = -0.28;
+      for (let i = 0; i < 3; i++) {
+        const theta = (i * 2 * Math.PI) / 3;
+        const hPos = new THREE.Vector3(
+          Math.cos(theta) * rRing,
+          yBase,
+          Math.sin(theta) * rRing
+        );
+        addAtom(chloride, materials.h, hPos, 0.30, 0.65);
+        addCylinderBond(nPos, hPos, 0.088);
+      }
+    } else if (key === 'ch4') {
+      const cPos = new THREE.Vector3(0, 0, 0);
+      addAtom(sodium, materials.c, cPos, 0.48, 0.98);
+      const scale = 0.92;
+      const verts = [
+        new THREE.Vector3(1, 1, 1),
+        new THREE.Vector3(1, -1, -1),
+        new THREE.Vector3(-1, 1, -1),
+        new THREE.Vector3(-1, -1, 1)
+      ];
+      for (const v of verts) {
+        const hPos = v.multiplyScalar(scale);
+        addAtom(chloride, materials.h, hPos, 0.31, 0.68);
+        addCylinderBond(cPos, hPos, 0.088);
+      }
+    } else if (key === 'c6h6') {
+      const rC = 1.48;
+      const rH = 2.58;
+      const cPositions = [];
+      for (let i = 0; i < 6; i++) {
+        const angle = (i * Math.PI) / 3;
+        const cPos = new THREE.Vector3(Math.cos(angle) * rC, Math.sin(angle) * rC, 0);
+        const hPos = new THREE.Vector3(Math.cos(angle) * rH, Math.sin(angle) * rH, 0);
+        cPositions.push(cPos);
+        addAtom(sodium, materials.c, cPos, 0.42, 0.88);
+        addAtom(chloride, materials.h, hPos, 0.28, 0.58);
+        addCylinderBond(cPos, hPos, 0.075);
+      }
+      for (let i = 0; i < 6; i++) {
+        const p1 = cPositions[i];
+        const p2 = cPositions[(i + 1) % 6];
+        const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+        const inward = mid.clone().negate().normalize();
+        addDashedResonanceBond(p1, p2, inward, 0.11);
+      }
+    }
+  }
+
+  const $ = id => document.getElementById(id);
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let auto = false, yaw = .62, pitch = .36, distance = 10, last = 0;
+
+  function update() {
+    crystal.rotation.set(pitch, yaw, 0);
+    camera.position.set(0, 0, distance);
+    camera.lookAt(0, 0, 0);
+  }
+
+  function zoom(factor) {
+    distance = THREE.MathUtils.clamp(distance * factor, 3.8, 19);
+    update();
+  }
+
+  function visible() {
+    sodium.visible = $('sodium').checked;
+    chloride.visible = $('chloride').checked;
+    bondsGroup.visible = $('connections').checked && (sodium.visible || chloride.visible) && !spaceFilling;
+  }
+
+  function updateScaleModeUI() {
+    for (const item of activeAtoms) {
+      item.mesh.scale.setScalar(spaceFilling ? item.cpkRadius : item.baseRadius);
+    }
+    $('scaleMode').textContent = spaceFilling
+      ? 'Modo: Preenchimento Espacial (CPK)'
+      : 'Modo: Esferas e Bastões';
+    $('scaleMode').setAttribute('aria-pressed', String(spaceFilling));
+    visible();
+  }
+
+  function rotationButton() {
+    $('rotate').textContent = auto ? 'Pausar rotação' : 'Iniciar rotação';
+    $('rotate').setAttribute('aria-pressed', String(auto));
+  }
+
+  function selectModel(key) {
+    if (!MODELS[key]) return;
+    currentModelKey = key;
+    const m = MODELS[key];
+    buildModel(key);
+
+    $('modelBadge').textContent = m.badge;
+    $('bondBadge').textContent = m.bondType;
+    $('specGeometry').textContent = m.geometry;
+    $('specAngle').textContent = m.angle;
+    $('labelPrimary').textContent = m.primaryLabel;
+    $('dotPrimary').style.background = m.primaryColor;
+    $('labelSecondary').textContent = m.secondaryLabel;
+    $('dotSecondary').style.background = m.secondaryColor;
+    $('labelConnections').textContent = m.connectionsLabel;
+    $('infoTitle').textContent = m.infoTitle;
+    $('infoP1').textContent = m.infoP1;
+    $('infoP2').textContent = m.infoP2;
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      const active = btn.dataset.model === key;
+      btn.setAttribute('aria-selected', String(active));
+    });
+
+    yaw = .62;
+    pitch = .36;
+    distance = m.defaultDistance;
+    updateScaleModeUI();
+    update();
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => selectModel(btn.dataset.model));
   });
-  for(const event of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(event,e=>{pointers.delete(e.pointerId);pinch=0;});
-  canvas.addEventListener('wheel',e=>{e.preventDefault();zoom(Math.exp(THREE.MathUtils.clamp(e.deltaY,-100,100)*.0015));},{passive:false});
-  new ResizeObserver(()=>{const w=view.clientWidth,h=view.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}).observe(view);
-  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();status.textContent='A visualização 3D foi interrompida. Recarregue a página.';});
-  update();visible();rotationButton();status.textContent='';document.querySelectorAll('button').forEach(b=>b.disabled=false);
-  function animate(t){requestAnimationFrame(animate);const dt=last?Math.min((t-last)/1000,.05):0;last=t;if(auto&&!pointers.size){yaw+=dt*(reduced?.18:.35);update();}renderer.render(scene,camera);}
+
+  $('prevModel').onclick = () => {
+    const idx = MODEL_ORDER.indexOf(currentModelKey);
+    const prevIdx = (idx - 1 + MODEL_ORDER.length) % MODEL_ORDER.length;
+    selectModel(MODEL_ORDER[prevIdx]);
+  };
+
+  $('nextModel').onclick = () => {
+    const idx = MODEL_ORDER.indexOf(currentModelKey);
+    const nextIdx = (idx + 1) % MODEL_ORDER.length;
+    selectModel(MODEL_ORDER[nextIdx]);
+  };
+
+  window.addEventListener('keydown', e => {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON')) return;
+    if (e.key === 'ArrowRight') $('nextModel').click();
+    if (e.key === 'ArrowLeft') $('prevModel').click();
+  });
+
+  $('rotate').onclick = () => { auto = !auto; rotationButton(); };
+  $('left').onclick = () => { yaw -= Math.PI / 12; update(); };
+  $('right').onclick = () => { yaw += Math.PI / 12; update(); };
+  $('near').onclick = () => zoom(.85);
+  $('far').onclick = () => zoom(1 / .85);
+  $('scaleMode').onclick = () => { spaceFilling = !spaceFilling; updateScaleModeUI(); };
+
+  for (const id of ['sodium', 'chloride', 'connections']) {
+    $(id).onchange = visible;
+  }
+
+  $('reset').onclick = () => {
+    yaw = .62;
+    pitch = .36;
+    distance = MODELS[currentModelKey].defaultDistance;
+    auto = false;
+    spaceFilling = false;
+    for (const id of ['sodium', 'chloride', 'connections']) {
+      $(id).checked = true;
+    }
+    updateScaleModeUI();
+    rotationButton();
+    update();
+  };
+
+  const pointers = new Map();
+  let pinch = 0;
+  const canvas = renderer.domElement;
+
+  canvas.addEventListener('pointerdown', e => {
+    canvas.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    pinch = 0;
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    const old = pointers.get(e.pointerId);
+    if (!old) return;
+    pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+    if (pointers.size === 1) {
+      yaw += (e.clientX - old.x) * .008;
+      pitch = THREE.MathUtils.clamp(pitch + (e.clientY - old.y) * .008, -1.5, 1.5);
+      update();
+    } else if (pointers.size === 2) {
+      const [a, b] = [...pointers.values()];
+      const gap = Math.hypot(a.x - b.x, a.y - b.y);
+      if (pinch && gap) zoom(pinch / gap);
+      pinch = gap;
+    }
+  });
+
+  for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) {
+    canvas.addEventListener(event, e => {
+      pointers.delete(e.pointerId);
+      pinch = 0;
+    });
+  }
+
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom(Math.exp(THREE.MathUtils.clamp(e.deltaY, -100, 100) * .0015));
+  }, {passive: false});
+
+  new ResizeObserver(() => {
+    const w = view.clientWidth, h = view.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }).observe(view);
+
+  canvas.addEventListener('webglcontextlost', e => {
+    e.preventDefault();
+    status.textContent = 'A visualização 3D foi interrompida. Recarregue a página.';
+  });
+
+  selectModel('nacl');
+  rotationButton();
+  status.textContent = '';
+  document.querySelectorAll('button').forEach(b => b.disabled = false);
+
+  function animate(t) {
+    requestAnimationFrame(animate);
+    const dt = last ? Math.min((t - last) / 1000, .05) : 0;
+    last = t;
+    if (auto && !pointers.size) {
+      yaw += dt * (reduced ? .18 : .35);
+      update();
+    }
+    renderer.render(scene, camera);
+  }
   requestAnimationFrame(animate);
-} catch(error) {
-  status.textContent='Não foi possível carregar o modelo 3D. Verifique a conexão com a internet e se o navegador oferece WebGL. Depois, recarregue a página.';
-  console.error('Falha ao iniciar o cristal de NaCl:',error);
+} catch (error) {
+  status.textContent = 'Não foi possível carregar o modelo 3D. Verifique a conexão com a internet e se o navegador oferece WebGL. Depois, recarregue a página.';
+  console.error('Falha ao iniciar o laboratório 3D:', error);
 }
 </script>
-</body></html>
+</body>
+</html>
