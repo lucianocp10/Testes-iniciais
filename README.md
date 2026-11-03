@@ -11,12 +11,14 @@ Experimentos e aplicações em desenvolvimento do Professor Luciano Costa.
 | Sistema respiratório 3D | [Explorar](https://lucianocp10.github.io/Testes-iniciais/sistema-respiratorio/) | [Orientações](./sistema-respiratorio/README.md) |
 | Cristal de NaCl 3D | [Explorar](https://lucianocp10.github.io/Testes-iniciais/cristal-nacl/) | [Orientações](./cristal-nacl/README.md) |
 | São Luís em suas fachadas | [Abrir apresentação](https://lucianocp10.github.io/Testes-iniciais/S%C3%A3oLuis/) | [Orientações](./S%C3%A3oLuis/README.md) |
+| São Luís 2 — Patrimônio em 3D | [Abrir apresentação](https://lucianocp10.github.io/Testes-iniciais/S%C3%A3o%20Luis%202/) | [Orientações](./S%C3%A3o%20Luis%202/README.md) |
 
 ## Organização
 
 - `sistema-respiratorio/`: aplicação, modelos GLB, documentação, análise dos modelos e testes automatizados.
 - `cristal-nacl/`: aplicação e documentação do cristal.
 - `SãoLuis/`: apresentação sobre o patrimônio arquitetônico de São Luís.
+- `São Luis 2/`: apresentação interativa em 3D sobre o patrimônio arquitetônico de São Luís.
 - `index.html`: catálogo das aplicações.
 - `repositorios/cristal-nacl/index.html`: redirecionamento para preservar o endereço antigo do cristal.
 - `reproducao_assexuada-1.html`: redirecionamento para a apresentação em Aulas de Ciências.
